@@ -1,0 +1,12 @@
+---
+- name: Install Docker on Ubuntu
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Remove Docker-related packages
+      apt:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - snapd

@@ -1,0 +1,47 @@
+---
+- name: Install log2RAM
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Update apt repositories
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: full
+        autoremove: yes
+        autoclean: yes
+
+    - name: Install rsync
+      apt:
+        name: rsync
+        state: present
+
+    - name: Download log2ram archive
+      get_url:
+        url: https://github.com/azlux/log2ram/archive/master.tar.gz
+        dest: ~/log2ram.tar.gz
+
+    - name: Extract log2ram archive
+      ansible.builtin.unarchive:
+        src: ~/log2ram.tar.gz
+        dest: ~
+
+    - name: Change to log2ram directory
+      ansible.builtin.command:
+        cmd: cd ~/log2ram-master
+
+    - name: Run log2ram install script
+      ansible.builtin.command:
+        cmd: sudo ./install.sh
+
+    - name: Remove log2ram archive
+      ansible.builtin.file:
+        path: ~/log2ram.tar.gz
+        state: absent
+
+    - name: Display log2ram installation message
+      ansible.builtin.debug:
+        msg: "log2ram installed. Reboot for changes to take effect. The config files can be edited at: /etc/log2ram.conf"

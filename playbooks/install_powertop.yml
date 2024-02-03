@@ -1,0 +1,36 @@
+---
+- name: Powertop Installation and Configuration
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Install Powertop
+      apt:
+        name: powertop
+        state: present
+
+    - name: Create powertop.service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/powertop.service
+        content: |
+          [Unit]
+          Description=PowerTOP auto tune
+          [Service]
+          Type=idle
+          Environment="TERM=dumb"
+          ExecStart=/usr/sbin/powertop --auto-tune
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable Powertop service
+      systemd:
+        name: powertop.service
+        enabled: yes
+        state: started
+
+    - name: Run Powertop auto-tune
+      command: powertop --auto-tune

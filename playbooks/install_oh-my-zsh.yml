@@ -1,0 +1,52 @@
+---
+- name: Install Oh My Zsh with Powerlevel10k theme and Zsh Autosuggestions
+  hosts: localhost
+
+  tasks:
+    - name: Update package lists
+      apt:
+        update_cache: yes
+      become: true
+
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - zsh
+        - curl
+        - git
+      become: true
+
+    - name: Install Oh My Zsh
+      shell: "sh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
+      become: true
+
+    - name: Clone Powerlevel10k theme
+      git:
+        repo: https://github.com/romkatv/powerlevel10k.git
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes/powerlevel10k"
+        version: master
+        depth: 1
+
+    - name: Modify ZSH_THEME in ~/.zshrc
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        regexp: '^ZSH_THEME='
+        line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
+
+    - name: Install Zsh Autosuggestions Plugin
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+        version: master
+
+    - name: Modify plugins in ~/.zshrc
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        regexp: '^plugins=\(.*\)'
+        line: 'plugins=(git zsh-autosuggestions)'
+
+    - name: Print Installation Complete message
+      debug:
+        msg: "Installation Complete. You need to restart the terminal for changes to take effect"

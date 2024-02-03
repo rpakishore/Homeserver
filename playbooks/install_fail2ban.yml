@@ -1,0 +1,32 @@
+---
+- name: Install and Configure Fail2Ban
+  hosts: localhost
+  become: yes  # to run tasks with sudo
+
+  tasks:
+    - name: Install fail2ban
+      apt:
+        name: fail2ban
+        state: present
+      become: yes
+
+    - name: Copy fail2ban configuration files
+      copy:
+        src: "/etc/fail2ban/fail2ban.conf"
+        dest: "/etc/fail2ban/fail2ban.local"
+
+    - name: Copy jail configuration files
+      copy:
+        src: "/etc/fail2ban/jail.conf"
+        dest: "/etc/fail2ban/jail.local"
+
+    - name: Modify backend in jail.local
+      lineinfile:
+        path: /etc/fail2ban/jail.local
+        regexp: '^backend ='
+        line: 'backend = systemd'
+
+    - name: Restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
