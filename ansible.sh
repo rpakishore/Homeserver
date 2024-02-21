@@ -42,7 +42,7 @@ read -p "Choose the # you want to call: " choice
 if [[ $choice -ge 1 && $choice -le ${#files[@]} ]]; then
     selected_file=${files[$((choice-1))]}
 
-    url="https://raw.githubusercontent.com/rpakishore/Homeserver-Debian/main/playbooks/$selected_file.yml"
+    url="https://raw.githubusercontent.com/rpakishore/Homeserver/main/playbooks/$selected_file.yml"
     ansible-playbook <(curl -s $url)
 
 else
