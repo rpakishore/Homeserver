@@ -17,6 +17,13 @@ chmod +x ansible.sh
 ./ansible.sh
 ```
 
+# Import custom bashrc
+
+
+1. `nano ~/.bashrc`
+2. `source /path/to/custom/bashrc`
+3. `source ~/.bashrc`
+
 # Acknowledgements
 
 - [Homeserver-Debian](https://github.com/Louis3797/Homeserver-Debian/)
